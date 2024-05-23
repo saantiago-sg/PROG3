@@ -1,0 +1,4 @@
+id_procesador;codigo_procesador;esta_refrigerado?;año_funcionamiento
+1;Proc1;true;2018
+2;Proc2;false;2017
+3;Proc3;true;2020
