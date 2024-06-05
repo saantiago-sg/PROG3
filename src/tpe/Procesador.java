@@ -16,6 +16,8 @@ public class Procesador {
         this.id = id;
     }
 
-    
-    
+    public boolean isRefrigerado() {
+        return true; // TODO:
+    }
+
 }

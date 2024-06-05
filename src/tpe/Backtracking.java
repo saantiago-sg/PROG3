@@ -38,7 +38,7 @@ public class Backtracking {
             if (solucionFinal.isEmpty()) {
                 solucionFinal.putAll(solucionActual);
             } else {
-                this.quedarmeConLaMejorSolucion(solucionActual);// comparar las dos soluciones y quedarme con la mejor
+                this.quedarmeConLaMejorSolucion(solucionActual);
             }
         } else {
 
@@ -89,7 +89,19 @@ public class Backtracking {
 
     }
 
-    private boolean noSuperaTareasCriticas(HashMap<String, ArrayList<Tarea>> solucionActual, int procesadorId){
-        return true;
+    private boolean noSuperaTareasCriticas(HashMap<String, ArrayList<Tarea>> solucionActual, String procesadorId) {
+        return true; //TODO:
     }
+
+    private boolean noSuperaTiempoLimite(int tiempoLimite, String procesadorId,
+            HashMap<String, ArrayList<Tarea>> solucionActual, int tiempoEjecucionTarea) {
+        return true;//TODO:
+    }
+
+    private HashMap<String, ArrayList<Tarea>> quedarmeConLaMejorSolucion(
+            HashMap<String, ArrayList<Tarea>> solucionActual) {
+        return null; // TODO: // comparar las dos soluciones y quedarme con la mejor / solucionactual
+                     // vs solucionfinal
+    }
+
 }
