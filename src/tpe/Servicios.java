@@ -11,17 +11,17 @@ import java.util.Map;
 public class Servicios {
     // Estructuras privadas para almacenar datos
     private Map<String, Tarea> tareasMap;
-    private List<Tarea> tareasList;
-    
+    // private List<Tarea> tareasList;
+
     // Complejidad O(n) donde n es el número de líneas en ambos archivo
     public Servicios(String pathProcesadores, String pathTareas) {
         tareasMap = new HashMap<>();
-        tareasList = new ArrayList<>();
+        // tareasList = new ArrayList<>();
         cargarDatos(pathTareas);
     }
 
-       // Método para cargar datos de tareas
-       private void cargarDatos(String pathTareas) {
+    // Método para cargar datos de tareas
+    private void cargarDatos(String pathTareas) {
         try (BufferedReader br = new BufferedReader(new FileReader(pathTareas))) {
             String line;
             // Saltar la primera línea (encabezado)
@@ -35,7 +35,7 @@ public class Servicios {
                 int nivelPrioridad = Integer.parseInt(parts[4]);
                 Tarea tarea = new Tarea(idTarea, nombreTarea, tiempoEjecucion, esCritica, nivelPrioridad);
                 tareasMap.put(idTarea, tarea);
-                tareasList.add(tarea);
+                // tareasList.add(tarea);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -43,14 +43,14 @@ public class Servicios {
     }
 
     // Servicio 1: Complejidad O(1)
-    public Tarea servicio1(String id) { 
+    public Tarea servicio1(String id) {
         return tareasMap.get(id);
     }
- 
+
     // Complejidad O(n) donde n es el número de tareas
     public List<Tarea> servicio2(boolean esCritica) {
         List<Tarea> result = new ArrayList<>();
-        for (Tarea tarea : tareasList) {
+        for (Tarea tarea : tareasMap.values()) {
             if (tarea.esCritica() == esCritica) {
                 result.add(tarea);
             }
@@ -61,7 +61,7 @@ public class Servicios {
     // Complejidad O(n) donde n es el número de tareas
     public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
         List<Tarea> result = new ArrayList<>();
-        for (Tarea tarea : tareasList) {
+        for (Tarea tarea : tareasMap.values()) {
             if (tarea.getNivelPrioridad() >= prioridadInferior && tarea.getNivelPrioridad() <= prioridadSuperior) {
                 result.add(tarea);
             }
