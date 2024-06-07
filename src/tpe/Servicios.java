@@ -11,8 +11,9 @@ import java.util.Map;
 public class Servicios {
     // Estructuras privadas para almacenar datos
     private Map<String, Tarea> tareasMap;
-    // private List<Tarea> tareasList;
-
+    private List<Tarea> tareasList;
+    private List<Procesador> procesadoresList;
+    
     // Complejidad O(n) donde n es el número de líneas en ambos archivo
     public Servicios(String pathProcesadores, String pathTareas) {
         tareasMap = new HashMap<>();

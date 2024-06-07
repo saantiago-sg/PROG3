@@ -2,22 +2,33 @@ package src.tpe;
 
 public class Procesador {
 
-    private String id;
+    public String idProcesador;
+    public String codigoProcesador;
+    public boolean estaRefrigerado;
+    public int anioFuncionamiento;
 
-    public Procesador(String id) {
-        this.id = id;
+    public Procesador(String idProcesador, String codigoProcesador, boolean estaRefrigerado, int anioFuncionamiento) {
+        this.idProcesador = idProcesador;
+        this.codigoProcesador = codigoProcesador;
+        this.estaRefrigerado = estaRefrigerado;
+        this.anioFuncionamiento = anioFuncionamiento;
     }
 
     public String getId() {
-        return id;
+        return this.idProcesador;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.idProcesador = id;
     }
 
     public boolean isRefrigerado() {
-        return true; // TODO:
+        return this.estaRefrigerado;
     }
-
+    
+    @Override
+    public String toString() {
+        return String.format("ID: %s, Código: %s, Refrigerado: %b, Año Funcionamiento: %d",
+                idProcesador, codigoProcesador, estaRefrigerado, anioFuncionamiento);
+    }
 }

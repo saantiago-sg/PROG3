@@ -35,4 +35,10 @@ public class Tarea {
     public int getNivelPrioridad() {
         return nivelPrioridad;
     }
+
+    @Override
+    public String toString() {
+        return String.format("ID: %s, Nombre: %s, Tiempo Ejecución: %d, Crítica: %b, Prioridad: %d",
+                idTarea, nombreTarea, tiempoEjecucion, esCritica, nivelPrioridad);
+    }
 }
