@@ -5,13 +5,18 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import src.tpe.Procesador;
+import src.tpe.Tarea;
 
 public class CSVReader {
 
 	public CSVReader() {
 	}
 
-	public void readTasks(String taskPath) {
+	public void readTasks(String taskPath, Map<String, Tarea> tareasMap, List<Tarea> tareasList) {
 
 		// Obtengo una lista con las lineas del archivo
 		// lines.get(0) tiene la primer linea del archivo
@@ -26,12 +31,15 @@ public class CSVReader {
 			Boolean critica = Boolean.parseBoolean(line[3].trim());
 			Integer prioridad = Integer.parseInt(line[4].trim());
 			// Aca instanciar lo que necesiten en base a los datos leidos
+
+			Tarea tarea = new Tarea(id, nombre, tiempo, critica, prioridad);
+            tareasMap.put(id, tarea);
+            tareasList.add(tarea);
 		}
 
 	}
 
-	public void readProcessors(String processorPath) {
-
+	public void readProcessors(String processorPath, List<Procesador> procesadoresList) {
 		// Obtengo una lista con las lineas del archivo
 		// lines.get(0) tiene la primer linea del archivo
 		// lines.get(1) tiene la segunda linea del archivo... y así
@@ -44,8 +52,10 @@ public class CSVReader {
 			Boolean refrigerado = Boolean.parseBoolean(line[2].trim());
 			Integer anio = Integer.parseInt(line[3].trim());
 			// Aca instanciar lo que necesiten en base a los datos leidos
-		}
 
+			Procesador procesador = new Procesador(id, codigo, refrigerado, anio);
+            procesadoresList.add(procesador);
+		}
 	}
 
 	private ArrayList<String[]> readContent(String path) {

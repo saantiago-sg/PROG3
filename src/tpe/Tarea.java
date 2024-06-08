@@ -38,7 +38,12 @@ public class Tarea {
 
     @Override
     public String toString() {
-        return String.format("ID: %s, Nombre: %s, Tiempo Ejecución: %d, Crítica: %b, Prioridad: %d",
-                idTarea, nombreTarea, tiempoEjecucion, esCritica, nivelPrioridad);
+        return "Tarea{" +
+                "id='" + idTarea + '\'' +
+                ", nombre='" + nombreTarea + '\'' +
+                ", tiempoEjecucion=" + tiempoEjecucion +
+                ", esCritica=" + esCritica +
+                ", nivelPrioridad=" + nivelPrioridad +
+                '}';
     }
 }

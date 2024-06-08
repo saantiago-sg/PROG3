@@ -1,46 +1,25 @@
 package src.tpe;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import src.tpe.utils.CSVReader;
+
 public class Servicios {
-    // Estructuras privadas para almacenar datos
     private Map<String, Tarea> tareasMap;
     private List<Tarea> tareasList;
     private List<Procesador> procesadoresList;
     
     // Complejidad O(n) donde n es el número de líneas en ambos archivo
     public Servicios(String pathProcesadores, String pathTareas) {
-        tareasMap = new HashMap<>();
-        // tareasList = new ArrayList<>();
-        cargarDatos(pathTareas);
-    }
-
-    // Método para cargar datos de tareas
-    private void cargarDatos(String pathTareas) {
-        try (BufferedReader br = new BufferedReader(new FileReader(pathTareas))) {
-            String line;
-            // Saltar la primera línea (encabezado)
-            br.readLine();
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(";");
-                String idTarea = parts[0];
-                String nombreTarea = parts[1];
-                int tiempoEjecucion = Integer.parseInt(parts[2]);
-                boolean esCritica = Boolean.parseBoolean(parts[3]);
-                int nivelPrioridad = Integer.parseInt(parts[4]);
-                Tarea tarea = new Tarea(idTarea, nombreTarea, tiempoEjecucion, esCritica, nivelPrioridad);
-                tareasMap.put(idTarea, tarea);
-                // tareasList.add(tarea);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.tareasMap = new HashMap<>();
+        this.tareasList = new ArrayList<>();
+        this.procesadoresList = new ArrayList<>();
+        
+        CSVReader csvReader = new CSVReader();
+        csvReader.readProcessors(pathProcesadores, procesadoresList);
+        csvReader.readTasks(pathTareas, tareasMap, tareasList);;
     }
 
     // Servicio 1: Complejidad O(1)
@@ -70,4 +49,14 @@ public class Servicios {
         return result;
     }
 
+
+    public Solucion resolverConBacktracking(int x) {
+        Backtracking backtracking = new Backtracking(procesadoresList, tareasList);
+        return backtracking.resolver(x);
+    }
+
+    public Solucion resolverConGreedy(int x) {
+        Greedy greedy = new Greedy(procesadoresList, tareasList);
+        return greedy.resolver(x);
+    }
 }

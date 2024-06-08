@@ -22,13 +22,24 @@ public class Procesador {
         this.idProcesador = id;
     }
 
+    public int getAnioFuncionamiento(){
+        return this.anioFuncionamiento;
+    }
+    public void setAnioFuncionamient(int anio) {
+        this.anioFuncionamiento = anio;
+    }
+
     public boolean isRefrigerado() {
         return this.estaRefrigerado;
     }
     
     @Override
     public String toString() {
-        return String.format("ID: %s, Código: %s, Refrigerado: %b, Año Funcionamiento: %d",
-                idProcesador, codigoProcesador, estaRefrigerado, anioFuncionamiento);
+        return "Procesador{" +
+                "id='" + idProcesador + '\'' +
+                ", codigo='" + codigoProcesador + '\'' +
+                ", estaRefrigerado=" + estaRefrigerado +
+                ", anioFuncionamiento=" + anioFuncionamiento +
+                '}';
     }
 }
