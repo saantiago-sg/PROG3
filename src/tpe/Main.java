@@ -4,8 +4,8 @@ package src.tpe;
 public class Main {
 
     public static void main(String[] args) {
-        String pathProcesadores = "./datasets/procesadores.csv";
-        String pathTareas = "./datasets/tareas.csv";
+        String pathProcesadores = "./datasets/Procesadores.csv";
+        String pathTareas = "./datasets/Tareas.csv";
 
         
         // instancio la clase Servicios
