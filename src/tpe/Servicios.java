@@ -1,4 +1,5 @@
 package src.tpe;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,18 +9,18 @@ import src.tpe.utils.CSVReader;
 
 public class Servicios {
     private Map<String, Tarea> tareasMap;
-    private List<Tarea> tareasList;
-    private List<Procesador> procesadoresList;
-    
+    private ArrayList<Tarea> tareasList;
+    private ArrayList<Procesador> procesadoresList;
+
     // Complejidad O(n) donde n es el número de líneas en ambos archivo
     public Servicios(String pathProcesadores, String pathTareas) {
         this.tareasMap = new HashMap<>();
         this.tareasList = new ArrayList<>();
         this.procesadoresList = new ArrayList<>();
-        
+
         CSVReader csvReader = new CSVReader();
         csvReader.readProcessors(pathProcesadores, procesadoresList);
-        csvReader.readTasks(pathTareas, tareasMap, tareasList);;
+        csvReader.readTasks(pathTareas, tareasMap, tareasList);
     }
 
     // Servicio 1: Complejidad O(1)
@@ -49,14 +50,18 @@ public class Servicios {
         return result;
     }
 
-
-    public Solucion resolverConBacktracking(int x) {
-        Backtracking backtracking = new Backtracking(procesadoresList, tareasList);
-        return backtracking.resolver(x);
+    public Solucion backtracking(int x) {
+        System.out.println(x);
+        Backtracking backtracking = new Backtracking(tareasList, procesadoresList);
+        HashMap<String, ArrayList<Tarea>> solucion = backtracking.resolverBacktracking(x);
+        int tiempoMaximo = backtracking.procesadorMasTarda(solucion);
+        return new Solucion(solucion, tiempoMaximo);
     }
 
-    public Solucion resolverConGreedy(int x) {
-        Greedy greedy = new Greedy(procesadoresList, tareasList);
-        return greedy.resolver(x);
+    public Solucion greedy(int x) {
+        Greedy greedy = new Greedy(tareasList, procesadoresList);
+        HashMap<String, ArrayList<Tarea>> solucion = greedy.resolverGreedy(x);
+        int tiempoMaximo = greedy.procesadorMasTarda(solucion);
+        return new Solucion(solucion, tiempoMaximo);
     }
 }

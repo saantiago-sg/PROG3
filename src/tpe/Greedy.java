@@ -2,88 +2,113 @@ package src.tpe;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class Greedy {
-    private List<Procesador> procesadores;
-    private List<Tarea> tareas;
+    private ArrayList<Tarea> tareas;
+    private ArrayList<Procesador> procesadores;
+    private HashMap<String, ArrayList<Tarea>> solucion;
+    private int candidatos;
 
-    public Greedy(List<Procesador> procesadores, List<Tarea> tareas) {
-        this.procesadores = procesadores;
+    public Greedy(ArrayList<Tarea> tareas, ArrayList<Procesador> procesadores) {
         this.tareas = tareas;
+        this.procesadores = procesadores;
+        this.candidatos = 0;
     }
 
-    public Solucion resolver(int X) {
-        HashMap<Procesador, List<Tarea>> asignaciones = new HashMap<>();
-        for (Procesador procesador : procesadores) {
-            asignaciones.put(procesador, new ArrayList<>());
-        }
-
-        List<Tarea> tareasOrdenadas = new ArrayList<>(tareas);
-        tareasOrdenadas.sort((t1, t2) -> t2.getTiempoEjecucion() - t1.getTiempoEjecucion());
-
-        int costo = 0;
+    public HashMap<String, ArrayList<Tarea>> resolverGreedy(int x) {
+        ArrayList<Tarea> tareasOrdenadas = this.ordenarTareas();
+        this.solucion = crearHashMap();
 
         for (Tarea tarea : tareasOrdenadas) {
             Procesador mejorProcesador = null;
-            int menorTiempo = Integer.MAX_VALUE;
-
+            int tiempoMejorProcesador = Integer.MAX_VALUE;
             for (Procesador procesador : procesadores) {
-                if (puedeAsignarTarea(procesador, tarea, asignaciones.get(procesador), X)) {
-                    int tiempoActual = calcularTiempoEjecucion(asignaciones.get(procesador))
-                            + tarea.getTiempoEjecucion();
-                    if (tiempoActual < menorTiempo) {
-                        menorTiempo = tiempoActual;
+                if (cumpleCondiciones(x, tarea, procesador)) {
+                    candidatos++;
+                    int tiempoProc = sumarTiemposProcesador(procesador);
+                    if (tiempoProc < tiempoMejorProcesador) {
                         mejorProcesador = procesador;
+                        tiempoMejorProcesador = tiempoProc;
                     }
                 }
             }
-
             if (mejorProcesador != null) {
-                asignaciones.get(mejorProcesador).add(tarea);
-                costo++;
+                solucion.get(mejorProcesador.getId()).add(tarea);
             }
         }
-
-        int tiempoMaximoEjecucion = calcularTiempoMaximoEjecucion(asignaciones);
-        return new Solucion(asignaciones, tiempoMaximoEjecucion, costo);
+        return solucion;
     }
 
-    private boolean puedeAsignarTarea(Procesador procesador, Tarea tarea, List<Tarea> tareasAsignadas, int X) {
-        int tareasCriticas = 0;
-        int tiempoTotal = 0;
-
-        for (Tarea t : tareasAsignadas) {
-            if (t.esCritica())
-                tareasCriticas++;
-            tiempoTotal += t.getTiempoEjecucion();
-        }
-
-        if (tarea.esCritica() && tareasCriticas >= 2)
-            return false;
-        if (!procesador.estaRefrigerado && (tiempoTotal + tarea.getTiempoEjecucion()) > X)
-            return false;
-
-        return true;
-    }
-
-    private int calcularTiempoEjecucion(List<Tarea> tareas) {
-        int tiempoTotal = 0;
-        for (Tarea tarea : tareas) {
-            tiempoTotal += tarea.getTiempoEjecucion();
-        }
-        return tiempoTotal;
-    }
-
-    private int calcularTiempoMaximoEjecucion(HashMap<Procesador, List<Tarea>> asignaciones) {
-        int tiempoMaximo = 0;
-        for (List<Tarea> tareas : asignaciones.values()) {
-            int tiempoTotal = 0;
-            for (Tarea tarea : tareas) {
-                tiempoTotal += tarea.getTiempoEjecucion();
+    private boolean cumpleCondiciones(int x, Tarea tarea, Procesador procesador) {
+        int tiempoProc = sumarTiemposProcesador(procesador) + tarea.getTiempoEjecucion();
+        if (!tarea.esCritica()) {
+            if (procesador.isRefrigerado()) {
+                return tiempoProc <= x;
+            } else {
+                return true;
             }
-            tiempoMaximo = Math.max(tiempoMaximo, tiempoTotal);
+        } else {
+            if (cantidadCriticas(procesador) < 2) {
+                if (procesador.isRefrigerado()) {
+                    return tiempoProc <= x;
+                } else {
+                    return true;
+                }
+            }
         }
-        return tiempoMaximo;
+        return false;
+    }
+
+    private int cantidadCriticas(Procesador procesador) {
+        int suma = 0;
+        for (Tarea tarea : solucion.get(procesador.getId())) {
+            if (tarea.esCritica()) {
+                suma++;
+            }
+        }
+        return suma;
+    }
+
+    private ArrayList<Tarea> ordenarTareas() {
+        Collections.sort(tareas, new Comparator<Tarea>() {
+            @Override
+            public int compare(Tarea t1, Tarea t2) {
+                return Integer.compare(t2.getTiempoEjecucion(), t1.getTiempoEjecucion());
+            }
+        });
+        return tareas;
+    }
+
+    private int sumarTiemposProcesador(Procesador procesador) {
+        ArrayList<Tarea> tareasDelProcesador = solucion.get(procesador.getId());
+        int suma = 0;
+        for (Tarea tarea : tareasDelProcesador) {
+            suma += tarea.getTiempoEjecucion();
+        }
+        return suma;
+    }
+
+    private HashMap<String, ArrayList<Tarea>> crearHashMap() {
+        HashMap<String, ArrayList<Tarea>> hash = new HashMap<>();
+        for (Procesador procesador : this.procesadores) {
+            hash.put(procesador.getId(), new ArrayList<Tarea>());
+        }
+        return hash;
+    }
+
+    public int procesadorMasTarda(HashMap<String, ArrayList<Tarea>> solucion) {
+        int sumaTotal = 0;
+        for (String procesadores : solucion.keySet()) {
+            int suma = 0;
+            for (Tarea tarea : solucion.get(procesadores)) {
+                suma += tarea.getTiempoEjecucion();
+            }
+            if (sumaTotal < suma) {
+                sumaTotal = suma;
+            }
+        }
+        return sumaTotal;
     }
 }

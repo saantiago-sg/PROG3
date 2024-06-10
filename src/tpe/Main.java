@@ -1,27 +1,22 @@
 package src.tpe;
 
-
 public class Main {
 
     public static void main(String[] args) {
         String pathProcesadores = "./datasets/Procesadores.csv";
         String pathTareas = "./datasets/Tareas.csv";
 
-        
-        // instancio la clase Servicios
         Servicios servicios = new Servicios(pathProcesadores, pathTareas);
-        
-        // Valor de x (puede ser configurado segun la necesidad)
-        int x = 100; 
-        
-        // Resolver con Backtracking
-        Solucion solucionBacktracking = servicios.resolverConBacktracking(x);
-        System.out.println("Resultado Backtracking:");
+
+        // Resolver el problema con Backtracking
+        int x = 50; 
+        Solucion solucionBacktracking = servicios.backtracking(x);
+        System.out.println("Solución con Backtracking:");
         System.out.println(solucionBacktracking);
-        
-        // Resolver con Greedy
-        Solucion solucionGreedy = servicios.resolverConGreedy(x);
-        System.out.println("Resultado Greedy:");
+
+        // Resolver el problema con Greedy
+        Solucion solucionGreedy = servicios.greedy(x);
+        System.out.println("Solución con Greedy:");
         System.out.println(solucionGreedy);
     }
 }

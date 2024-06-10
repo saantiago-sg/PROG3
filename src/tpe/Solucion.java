@@ -1,31 +1,36 @@
 package src.tpe;
-import java.util.List;
-import java.util.Map;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Solucion {
-    Map<Procesador, List<Tarea>> asignaciones;
-    int tiempoMaximoEjecucion;
-    int costo;
+    private HashMap<String, ArrayList<Tarea>> asignaciones;
+    private int tiempoTotal;
 
-    public Solucion(Map<Procesador, List<Tarea>> asignaciones, int tiempoMaximoEjecucion, int costo) {
+    public Solucion(HashMap<String, ArrayList<Tarea>> asignaciones, int tiempoTotal) {
         this.asignaciones = asignaciones;
-        this.tiempoMaximoEjecucion = tiempoMaximoEjecucion;
-        this.costo = costo;
+        this.tiempoTotal = tiempoTotal;
     }
-    
+
+    public HashMap<String, ArrayList<Tarea>> getAsignaciones() {
+        return asignaciones;
+    }
+
+    public int getTiempoTotal() {
+        return tiempoTotal;
+    }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Tiempo máximo de ejecución: ").append(tiempoMaximoEjecucion).append("\n");
-        sb.append("Costo: ").append(costo).append("\n");
-        for (Map.Entry<Procesador, List<Tarea>> entry : asignaciones.entrySet()) {
-            sb.append(entry.getKey().idProcesador).append(": ");
-            for (Tarea tarea : entry.getValue()) {
-                sb.append(tarea.getIdTarea()).append(" ");
+        for (String procesadorId : asignaciones.keySet()) {
+            sb.append("Procesador ").append(procesadorId).append(":\n");
+            for (Tarea tarea : asignaciones.get(procesadorId)) {
+                sb.append("* Tarea: ").append(tarea.getIdTarea())
+                        .append(", Tiempo de ejecución: ").append(tarea.getTiempoEjecucion()).append("\n");
             }
-            sb.append("\n");
         }
+        sb.append("Tiempo total de ejecución: ").append(tiempoTotal).append("\n");
         return sb.toString();
     }
 }

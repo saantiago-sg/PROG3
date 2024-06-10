@@ -22,9 +22,10 @@ public class Procesador {
         this.idProcesador = id;
     }
 
-    public int getAnioFuncionamiento(){
+    public int getAnioFuncionamiento() {
         return this.anioFuncionamiento;
     }
+
     public void setAnioFuncionamient(int anio) {
         this.anioFuncionamiento = anio;
     }
@@ -32,7 +33,7 @@ public class Procesador {
     public boolean isRefrigerado() {
         return this.estaRefrigerado;
     }
-    
+
     @Override
     public String toString() {
         return "Procesador{" +

@@ -2,75 +2,159 @@ package src.tpe;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class Backtracking {
-    private List<Procesador> procesadores;
-    private List<Tarea> tareas;
-    // private HashMap<String, ArrayList<Tarea>> solucionFinal;
 
-    public Backtracking(List<Procesador> procesadores, List<Tarea> tareas) {
-        this.procesadores = procesadores;
-        this.tareas = tareas;
-    }
+	private ArrayList<Tarea> tareas;
+	private ArrayList<Procesador> procesadores;
+	private HashMap<String, ArrayList<Tarea>> mejorSolucion;
+	private int metrica;
+	private int sumaMejorSolucion;
 
-    public Solucion resolver(int x){
-        HashMap<Procesador, List<Tarea>> asignaciones = new HashMap<>();
-        for(Procesador procesador : procesadores){
-            asignaciones.put(procesador, new ArrayList<>());
-        }
-        return backtrack(asignaciones, 0, x, 0);
-    }
+	public Backtracking(ArrayList<Tarea> tareas, ArrayList<Procesador> procesadores) {
+		this.tareas = tareas;
+		this.procesadores = procesadores;
+		this.mejorSolucion = null;
+	}
 
-    private Solucion backtrack(HashMap<Procesador, List<Tarea>> asignaciones, int idx, int X, int costo) {
-        if (idx == tareas.size()) {
-            int tiempoMaximoEjecucion = calcularTiempoMaximoEjecucion(asignaciones);
-            return new Solucion(new HashMap<>(asignaciones), tiempoMaximoEjecucion, costo);
-        }
+	public HashMap<String, ArrayList<Tarea>> resolverBacktracking(int x) {
+		HashMap<String, ArrayList<Tarea>> solucionActual = new HashMap<>();
+		ArrayList<Tarea> asignadas = new ArrayList<>();
+		for (Procesador procesadores : this.procesadores) {
+			solucionActual.put(procesadores.getId(), new ArrayList<Tarea>());
+		}
 
-        Tarea tarea = tareas.get(idx);
-        Solucion mejorSolucion = null;
+		int indiceTareas = 0;
+		this.metrica = 0;
+		backtracking(solucionActual, asignadas, x, indiceTareas);
+		return mejorSolucion;
+	}
 
-        for (Procesador procesador : procesadores) {
-            if (puedeAsignarTarea(procesador, tarea, asignaciones.get(procesador), X)) {
-                asignaciones.get(procesador).add(tarea);
-                Solucion solucion = backtrack(asignaciones, idx + 1, X, costo + 1);
-                asignaciones.get(procesador).remove(tarea);
+	private void backtracking(HashMap<String, ArrayList<Tarea>> solucionActual,
+		ArrayList<Tarea> asignadas, int tiempoX, int index) {
+		// Si todas las tareas fueron asignadas, se considera una solucion completa
+		if (asignadas.size() == this.tareas.size()) {
+			elegirMejorSolucion(solucionActual);
+		} else {
+		// Compruebo si la solucion actual es valida y es mejor que la mejor solucion hasta ahora
+			if (comprobarSolucionParcial(solucionActual)) {
+				int indexTarea = index;
+				while (indexTarea < tareas.size()) {
+					Tarea tarea = this.tareas.get(indexTarea);
+					if (!asignadas.contains(tarea)) {
+						for (Procesador procesador : this.procesadores) {
+							// compruebo si se puede asignar la tarea al procesador
+							if (puedeAsignarTarea(procesador, tarea, solucionActual)) {
+								 // Si el procesador no esta refrigerado, compruebo si respeta el limite de tiempo
+								if (!procesador.isRefrigerado() && comprobarTiempoLimite(procesador,tarea, solucionActual, tiempoX)) {
+									solucionActual.get(procesador.getId()).add(tarea);
+									asignadas.add(tarea);
+									index += 1;
+									metrica += 1;
+									backtracking(solucionActual, asignadas, tiempoX, index);
+									solucionActual.get(procesador.getId()).remove(tarea);
+									asignadas.remove(tarea);
+									index--;
 
-                if (mejorSolucion == null || solucion.tiempoMaximoEjecucion < mejorSolucion.tiempoMaximoEjecucion) {
-                    mejorSolucion = solucion;
-                }
-            }
-        }
+								} else if (procesador.isRefrigerado()) {
+								 	// Si el procesador esta refrigerado, asigno la tarea sin comprobar el tiempo
+									solucionActual.get(procesador.getId()).add(tarea);
+									asignadas.add(tarea);
+									index += 1;
+									metrica += 1;
+									backtracking(solucionActual, asignadas,tiempoX, index);
+									solucionActual.get(procesador.getId()).remove(tarea);
+									asignadas.remove(tarea);
+									index--;
+								}
 
-        return mejorSolucion;
-    }
+							}
+						}
+					}
+					indexTarea += 1;
+				}
+			}
+		}
+	}
 
-    private boolean puedeAsignarTarea(Procesador procesador, Tarea tarea, List<Tarea> tareasAsignadas, int X) {
-        int tareasCriticas = 0;
-        int tiempoTotal = 0;
+	private boolean comprobarSolucionParcial(HashMap<String, ArrayList<Tarea>> solucionActual) {
+		if (this.mejorSolucion == null) {
+			return true;
+		} else {
+			int sumaActual = procesadorMasTarda(solucionActual);
+			if (sumaActual < this.sumaMejorSolucion) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-        for (Tarea t : tareasAsignadas) {
-            if (t.esCritica()) tareasCriticas++;
-            tiempoTotal += t.getTiempoEjecucion();
-        }
+	private boolean comprobarTiempoLimite(Procesador procesador, Tarea tarea, HashMap<String, ArrayList<Tarea>> solucionActual, int tiempoX) {
+		int sumaParcial = 0;
+		for (Tarea t : solucionActual.get(procesador.getId())) {
+			sumaParcial += t.getTiempoEjecucion();
+		}
+		if (sumaParcial + tarea.getTiempoEjecucion() <= tiempoX) {
+			return true;
+		}
+		return false;
+	}
 
-        if (tarea.esCritica() && tareasCriticas >= 2) return false;
-        if (!procesador.estaRefrigerado && (tiempoTotal + tarea.getTiempoEjecucion()) > X) return false;
+	private boolean puedeAsignarTarea(Procesador procesador, Tarea tarea, HashMap<String, ArrayList<Tarea>> solucionActual) {
+		if (!tarea.esCritica()) {
+			return true;
+		} else {
+			if (this.getCantidadCritica(procesador, solucionActual) < 2) {
+				return true;
+			}
+			return false;
+		}
+	}
 
-        return true;
-    }
+	private int getCantidadCritica(Procesador procesador, HashMap<String, ArrayList<Tarea>> solucionActual) {
+		int tareasCriticas = 0;
+		for (Tarea task : solucionActual.get(procesador.getId())) {
+			if (task.esCritica())
+				tareasCriticas++;
+		}
+		return tareasCriticas;
+	}
 
-    private int calcularTiempoMaximoEjecucion(HashMap<Procesador, List<Tarea>> asignaciones) {
-        int tiempoMaximo = 0;
-        for (List<Tarea> tareas : asignaciones.values()) {
-            int tiempoTotal = 0;
-            for (Tarea tarea : tareas) {
-                tiempoTotal += tarea.getTiempoEjecucion();
-            }
-            tiempoMaximo = Math.max(tiempoMaximo, tiempoTotal);
-        }
-        return tiempoMaximo;
-    }
+	private void elegirMejorSolucion(HashMap<String, ArrayList<Tarea>> solucionActual) {
+		int sumaActual = procesadorMasTarda(solucionActual);
+		if (sumaActual != 0) {
+			if (this.mejorSolucion == null) {
+				this.mejorSolucion = new HashMap<>();
+				for (String key : solucionActual.keySet()) {
+					this.mejorSolucion.put(key,
+							new ArrayList<>(solucionActual.get(key)));
+				}
+				this.sumaMejorSolucion = sumaActual;
+			} else {
+				if (procesadorMasTarda(this.mejorSolucion) > procesadorMasTarda(solucionActual)) {
+					this.mejorSolucion = new HashMap<>();
+					for (String key : solucionActual.keySet()) {
+						this.mejorSolucion.put(key, new ArrayList<>(
+								solucionActual.get(key)));
+					}
+					this.sumaMejorSolucion = sumaActual;
+				}
+			}
+		}
+	}
+
+	public int procesadorMasTarda(HashMap<String, ArrayList<Tarea>> solucion) {
+		int sumaTotal = 0;
+		for (String procesadores : solucion.keySet()) {
+			int suma = 0;
+			for (Tarea tareas : solucion.get(procesadores)) {
+				suma += tareas.getTiempoEjecucion();
+			}
+			if (sumaTotal < suma) {
+				sumaTotal = suma;
+			}
+		}
+		return sumaTotal;
+	}
 
 }
