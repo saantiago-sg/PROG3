@@ -12,7 +12,7 @@ public class Servicios {
     private ArrayList<Tarea> tareasList;
     private ArrayList<Procesador> procesadoresList;
 
-    // Complejidad O(n) donde n es el número de líneas en ambos archivo
+    // O(n + m), n es el numero de procesadores y m es el numero de tareas
     public Servicios(String pathProcesadores, String pathTareas) {
         this.tareasMap = new HashMap<>();
         this.tareasList = new ArrayList<>();
@@ -23,12 +23,12 @@ public class Servicios {
         csvReader.readTasks(pathTareas, tareasMap, tareasList);
     }
 
-    // Servicio 1: Complejidad O(1)
+    // Complejidad O(1)
     public Tarea servicio1(String id) {
         return tareasMap.get(id);
     }
 
-    // Complejidad O(n) donde n es el número de tareas
+    // Complejidad O(n) donde n es el numero de tareas
     public List<Tarea> servicio2(boolean esCritica) {
         List<Tarea> result = new ArrayList<>();
         for (Tarea tarea : tareasMap.values()) {
@@ -39,7 +39,7 @@ public class Servicios {
         return result;
     }
 
-    // Complejidad O(n) donde n es el número de tareas
+    // Complejidad O(n) donde n es el numero de tareas
     public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
         List<Tarea> result = new ArrayList<>();
         for (Tarea tarea : tareasMap.values()) {
