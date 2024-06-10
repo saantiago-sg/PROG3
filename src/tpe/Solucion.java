@@ -6,10 +6,14 @@ import java.util.HashMap;
 public class Solucion {
     private HashMap<String, ArrayList<Tarea>> asignaciones;
     private int tiempoTotal;
+    private int metricaEstadosGenerados; // metrica para Backtracking
+    private int metricaCandidatos; // metrica para Greedy
 
-    public Solucion(HashMap<String, ArrayList<Tarea>> asignaciones, int tiempoTotal) {
+    public Solucion(HashMap<String, ArrayList<Tarea>> asignaciones, int tiempoTotal, int metricaEstadosGenerados, int metricaCandidatos) {
         this.asignaciones = asignaciones;
         this.tiempoTotal = tiempoTotal;
+        this.metricaEstadosGenerados = metricaEstadosGenerados;
+        this.metricaCandidatos = metricaCandidatos;
     }
 
     public HashMap<String, ArrayList<Tarea>> getAsignaciones() {
@@ -18,6 +22,14 @@ public class Solucion {
 
     public int getTiempoTotal() {
         return tiempoTotal;
+    }
+
+    public int getMetricaEstadosGenerados() {
+        return metricaEstadosGenerados;
+    }
+
+    public int getMetricaCandidatos() {
+        return metricaCandidatos;
     }
 
     @Override

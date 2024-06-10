@@ -50,18 +50,27 @@ public class Servicios {
         return result;
     }
 
-    public Solucion backtracking(int x) {
-        System.out.println(x);
+    public Solucion backtracking(int tiempoLimite) {
         Backtracking backtracking = new Backtracking(tareasList, procesadoresList);
-        HashMap<String, ArrayList<Tarea>> solucion = backtracking.resolverBacktracking(x);
+        HashMap<String, ArrayList<Tarea>> solucion = backtracking.resolverBacktracking(tiempoLimite);
+        int metricaEstadosGenerados = backtracking.getMetrica();
         int tiempoMaximo = backtracking.procesadorMasTarda(solucion);
-        return new Solucion(solucion, tiempoMaximo);
+        return new Solucion(solucion, tiempoMaximo, metricaEstadosGenerados, 0); 
     }
 
-    public Solucion greedy(int x) {
+    public Solucion greedy(int tiempoLimite) {
         Greedy greedy = new Greedy(tareasList, procesadoresList);
-        HashMap<String, ArrayList<Tarea>> solucion = greedy.resolverGreedy(x);
+        HashMap<String, ArrayList<Tarea>> solucion = greedy.resolverGreedy(tiempoLimite);
+        int metricaCandidatos = greedy.getCandidatos();
         int tiempoMaximo = greedy.procesadorMasTarda(solucion);
-        return new Solucion(solucion, tiempoMaximo);
+        return new Solucion(solucion, tiempoMaximo, 0, metricaCandidatos);
+    }
+
+    public ArrayList<Tarea> getTareasList(){
+        return this.tareasList;
+    }
+
+    public ArrayList<Procesador> getProcesadoresList(){
+        return this.procesadoresList;
     }
 }

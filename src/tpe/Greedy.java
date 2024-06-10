@@ -111,4 +111,8 @@ public class Greedy {
         }
         return sumaTotal;
     }
+    
+    public int getCandidatos() {
+        return this.candidatos;
+    }
 }

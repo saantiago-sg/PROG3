@@ -156,5 +156,8 @@ public class Backtracking {
 		}
 		return sumaTotal;
 	}
-
+	
+	public int getMetrica() {
+        return this.metrica;
+    }
 }
